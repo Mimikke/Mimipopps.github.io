@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎲 Boredom Decision Maker 🎲</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #a5f3fc, #fa70bf);
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #1668e2;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #444;
+    }
+
+    select, button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    select {
+      background-color: #fff;
+      color: #333;
+    }
+
+    button {
+      background-color: #ec4899;
+      color: white;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #db2777;
+      transform: scale(1.05);
+    }
+
+    #output {
+      margin-top: 40px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px 25px;
+      min-width: 250px;
+      min-height: 40px;
+    }
+
+    #idea {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #1d4ed8;
+      margin-bottom: 10px;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>🎲 Boredom Decision Maker 🎲</h1>
+  <p>Feeling bored? Let me give you ideas!</p>
+
+  <select id="category">
+    <option value="random">Any Category</option>
+    <option value="active">🏃 Active</option>
+       <option value="relaxing">🧘 Relaxing</option>
+    <option value="social">💬 Social</option>
+    <option value="Fun but risky">⛓️ Fun but risky</option>
+  </select>
+
+  <br />
+  <button id="decideBtn">Give me an idea!</button>
+
+  <div id="output">
+  <div id="idea"></div>
+  </div>
+
+  <script>
+    const ideas = {
+      active: [
+        "Go for a walk 🏃‍♀️",
+        "Work out 💪",
+        "Sing to your favorite song🧘",
+        "Dance to your favorite song 💃",
+        "Clean your room 🧹",
+        "Bake a cookie🍪",
+      ],
+      "Fun but risky": [
+        "Egg your friends's house🥚",
+        "Ding dong ditch🔔",
+        "Rage bait a family member💢",
+        "Rage bait a friend💢",
+        "Prank call someone📞",
+        "Sneak onto a rooftop🏠",
+      ],
+      relaxing: [
+        "Watch a movie 🎬",
+        "Listen to music 🎧",
+        "Take a nap 😴",
+        "Read a book 📖",
+        "Do some skincare🌿",
+        "Take a bath🛁",
+      ],
+      social: [
+        "Text a friend 💬",
+        "Text your crush 🩷",
+        "Call your grandparents ☎️",
+        "Play an online game with friends 🎮",
+        "Send someone a reel 😂",
+        "Go on Omegal👤",
+      ],
+    };
+
+    const decideBtn = document.getElementById("decideBtn");
+    const ideaEl = document.getElementById("idea");
+    const outputEl = document.getElementById("output");
+
+    decideBtn.addEventListener("click", () => {
+      const category = document.getElementById("category").value;
+
+      // choose random category if "Any" selected
+      const chosenCategory =
+        category === "random"
+          ? Object.keys(ideas)[Math.floor(Math.random() * Object.keys(ideas).length)]
+          : category;
+
+      const list = ideas[chosenCategory];
+      const randomIdea = list[Math.floor(Math.random() * list.length)];
+     
+
+      // Show idea + emoji
+      ideaEl.textContent = randomIdea;
+     
+
+      // Trigger animation
+      outputEl.classList.remove("show");
+      void outputEl.offsetWidth; // restart transition
+      outputEl.classList.add("show");
+    });
+  </script>
+</body>
+</html>
