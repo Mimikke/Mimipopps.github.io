@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mini Fruit Slice</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #111;
+    font-family: Arial, sans-serif;
+    color: white;
+    touch-action: none;
+}
+
+#ui {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+canvas {
+    display: block;
+}
+</style>
+</head>
+
+<body>
+
+<div id="ui">
+    Score: <span id="score">0</span> |
+    Lives: <span id="lives">3</span>
+</div>
+
+<canvas id="game"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let fruits = [];
+let score = 0;
+let lives = 3;
+let slicing = false;
+
+const scoreDisplay = document.getElementById("score");
+const livesDisplay = document.getElementById("lives");
+
+class Fruit {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height;
+        this.radius = 25 + Math.random() * 10;
+        this.speed = 4 + Math.random() * 3;
+        this.sliced = false;
+    }
+
+    update() {
+        this.y -= this.speed;
+        if (this.y < 0 && !this.sliced) {
+            lives--;
+            livesDisplay.textContent = lives;
+            this.sliced = true;
+        }
+    }
+
+    draw() {
+        if (!this.sliced) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "lime";
+            ctx.fill();
+        }
+    }
+}
+
+function spawnFruit() {
+    fruits.push(new Fruit());
+}
+
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    fruits.forEach(fruit => {
+        fruit.update();
+        fruit.draw();
+    });
+
+    fruits = fruits.filter(fruit => !fruit.sliced);
+
+    if (lives > 0) {
+        requestAnimationFrame(gameLoop);
+    } else {
+        ctx.fillStyle = "white";
+        ctx.font = "40px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2);
+    }
+}
+
+function slice(x, y) {
+    fruits.forEach(fruit => {
+        let dx = x - fruit.x;
+        let dy = y - fruit.y;
+        let distance = Math.sqrt(dx*dx + dy*dy);
+
+        if (distance < fruit.radius && !fruit.sliced) {
+            fruit.sliced = true;
+            score++;
+            scoreDisplay.textContent = score;
+        }
+    });
+}
+
+// Touch events
+canvas.addEventListener("touchstart", e => {
+    slicing = true;
+});
+
+canvas.addEventListener("touchmove", e => {
+    if (slicing) {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        slice(touch.clientX - rect.left, touch.clientY - rect.top);
+    }
+});
+
+canvas.addEventListener("touchend", () => {
+    slicing = false;
+});
+
+// Mouse support
+canvas.addEventListener("mousedown", () => slicing = true);
+canvas.addEventListener("mousemove", e => {
+    if (slicing) slice(e.clientX, e.clientY);
+});
+canvas.addEventListener("mouseup", () => slicing = false);
+
+// Spawn fruit every second
+setInterval(() => {
+    if (lives > 0) spawnFruit();
+}, 1000);
+
+gameLoop();
+</script>
+
+</body>
+</html>
